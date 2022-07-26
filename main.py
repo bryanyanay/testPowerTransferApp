@@ -1,8 +1,7 @@
 import config as cfg
-from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, relationship, Session 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, or_, select, inspect
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Integer, String, DateTime, Numeric
 from sqlalchemy.sql import func
@@ -46,10 +45,15 @@ class User(Base):
                 raise ValueError(f'There is no user with id {uid}')
             return list(user.vehicles) # after returning i believe the vehicle objects are "detached" and lose their connection with the corresponding row?? 
     @classmethod
-    def getTransactions(cls, uid):
+    def getTxs(cls, uid):
         # returns a list of the user's Tx objects (both receiving and donating)
-        
-
+        with Session(engine) as s:
+            user = s.get(cls, uid)
+            if user is None:
+                raise ValueError(f'There is no user with id {uid}')
+            stmt = select(Tx).where(or_(Tx.recipient_id == uid, Tx.donor_id == uid))
+            txs = s.scalars(stmt)
+            return list(txs)
 
 class Tx(Base):
     __tablename__ = "transactions"
@@ -103,9 +107,6 @@ class TxIP(Base): # transactions in progress
             s.commit()
 
 # Base.metadata.create_all(engine)
-
-for v in User.getVehicles(1):
-    print(v)
 
 def createTestObjects():
     with Session(engine) as s:
