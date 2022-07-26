@@ -20,11 +20,11 @@ h2 {
 
 body {
     display: grid;
-    grid-template: 0.5fr 2fr 2fr / 3fr 2fr;
+    grid-template: 0.5fr 2fr 2fr / 0.3fr 3fr 2fr 0.3fr;
     grid-template-areas: 
-        "title title"
-        "vehicles transfer"
-        "transactions transfer";
+        "title title title title"
+        "space-left vehicles transfer space-right"
+        "space-left transactions transfer space-right";
 
 
     background-color: hsl(0, 0%, 97%);
@@ -54,6 +54,11 @@ body {
     margin: 25px;
     padding: 35px 25px;
     background-color: white;
+
+    transition: transform 0.1s;
+}
+.box:hover {
+    transform: scale(1.015);
 }
 
 #transfer-form {
@@ -72,15 +77,17 @@ body {
 
     padding: 0.5em;
     border-bottom: 1px dotted black;
-    color:rgb(97, 97, 97);
 }
 .row:hover {
     background-color: hsl(0, 0%, 97%);
 }
+.row p {
+    color: rgb(109, 109, 109);
+}
 
 button {
     color: whitesmoke;
-    background-color: rgb(123, 123, 255);
+    background-color: #7b7bff;
 
     border: none;
     border-radius: 1000000px;
@@ -100,6 +107,5 @@ button:hover {
 #charging-img {
     filter: blur(3px);
 }
-#charging-img:hover {
-    filter: blur(1px) brightness(0) saturate(100%) invert(99%) sepia(40%) saturate(2162%) hue-rotate(73deg) brightness(95%) contrast(95%);
-}
+#charging-img.on {
+    filter: blur(1px) brightness(0) saturate(100%) invert(41%) sepia(67%) saturate(627%) hue-rotate(202deg) brightness(101%) contrast(105%);}
