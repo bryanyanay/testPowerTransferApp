@@ -1,6 +1,8 @@
 import config as cfg
-from sqlalchemy import create_engine, insert
-from sqlalchemy import MetaData, Table, Column, ForeignKey
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, relationship, Session 
+from sqlalchemy import and_, select
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Integer, String, DateTime, Numeric
 from sqlalchemy.sql import func
 
@@ -10,62 +12,74 @@ engine = create_engine(
     future=True
 )
 
-md = MetaData()
+Base = declarative_base();
+class Vehicle(Base):
+    __tablename__ = "vehicles"
+    vid = Column(Integer, primary_key=True)
+    license_plate = Column(String(6))
+    uid = Column(Integer, ForeignKey("users.uid"))
 
-vehicles = Table(
-    "vehicles",
-    md, 
-    Column("vid", Integer, primary_key=True),
-    Column("license_plate", String(6)),
-    Column("owner_id", ForeignKey("users.uid"))
-)
-users = Table(
-    "users",
-    md,
-    Column("uid", Integer, primary_key=True),
-    Column("first_name", String(40)),
-    Column("last_name", String(40))
-)
-transfers = Table(
-    "transfers",
-    md,
-    Column("tid", Integer, primary_key=True),
-    Column("time_of_transfer", DateTime, server_default=func.now()),
-    Column("kwh_transferred", Numeric),
-    Column("recipient_id", ForeignKey("vehicles.vid")),
-    Column("donor_id", ForeignKey("vehicles.vid"))
-)
+    users = relationship("User", back_populates="vehicles")
 
-def create_users():
-    with engine.begin() as c:
-        c.execute(
-            insert(users),
-            [
-                {"first_name": "joe", "last_name": "bob"},
-                {"first_name": "alison", "last_name": "nosila"},
-            ]
-        )
-def create_vehicles():
-    with engine.begin() as c:
-        c.execute(
-            insert(vehicles),
-            [
-                {"license_plate": "JOEBOB", "owner_id": 1},
-                {"license_plate": "SONALI", "owner_id": 2}
-            ]
-        )
+class User(Base):
+    __tablename__ = "users"
+    uid = Column(Integer, primary_key=True)
+    first_name = Column(String)
+    last_name = Column(String)
+
+    vehicles = relationship("Vehicle", back_populates="users")
+
+class Tx(Base):
+    __tablename__ = "transactions"
+    tid = Column(Integer, primary_key=True)
+
+    start_time = Column(DateTime)
+    stop_time = Column(DateTime)
+    recipient_id = Column(ForeignKey("vehicles.vid"))
+    donor_id = Column(ForeignKey("vehicles.vid"))
+    kwh_transferred = Column(Numeric)
+
+class TxIP(Base): # transactions in progress
+    __tablename__ = "tx_in_progress"
+    txip_id = Column(Integer, primary_key=True)
+    time = Column(DateTime, server_default=func.now())
+    recipient_id = Column(ForeignKey("vehicles.vid"))
+    donor_id = Column(ForeignKey("vehicles.vid"))
+
+    
+    @classmethod
+    def startTxIP(cls, recipient_id, donor_id):
+        with Session(engine) as s: # test if there is already a TxIP from donor to recipient
+            stmt = select(1).where(and_(TxIP.recipient_id == recipient_id, TxIP.donor_id == donor_id))
+            if s.execute(stmt).first() is not None:
+                raise ValueError(f'There is already a Tx in progress from vehicle {donor_id} to vehicle {recipient_id}')
+    @classmethod
+    def stopTxIP(cls):
+        with Session(engine) as s:
+            
+
+# Base.metadata.create_all(engine)
+
+TxIP.startTxIP(101, 102)
 
 
-#md.create_all(engine)
-#create_users();
-#create_vehicles();
+"""
+with Session(engine) as s:
+    u1 = User(first_name="Joe", last_name="Bob")
+    u2 = User(first_name="Alice", last_name="Allie")
 
-def record_transfer(did, rid, kwht):
-    """records a transfer of energy in kwh from donor vehicle (did) to recipient vehicle (rid) at current time"""
-    stmt = insert(transfers).values(donor_id=did, recipient_id=rid, kwh_transferred=kwht)
-    print(stmt)
-    with engine.begin() as c:
-        c.execute(stmt)
+    v1 = Vehicle(license_plate="JJJBBB")
+    v2 = Vehicle(license_plate="BBBJJJ")
+    v3 = Vehicle(license_plate="AAAAAA")
 
-record_transfer(1, 2, 134.12)
+    u1.vehicles.append(v1)
+    u1.vehicles.append(v2)
+    u2.vehicles.append(v3)
+
+    s.add(u1)
+    s.add(u2)
+    s.commit()
+"""
+
+
 
