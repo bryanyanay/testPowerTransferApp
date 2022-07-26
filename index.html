@@ -4,56 +4,65 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="styles.css">
     <title>Power Transfer</title>
 </head>
 <body>
-    <h1>Power Transfer</h1>
-
-    <div>
+    <h1 class="title">Power Transfer</h1>
+    <div class="vehicles box">
         <h2>Your Vehicles</h2>
-        <div>
+        <div class="row">
             <p>Vehicle ID: 28</p>
             <p>License: FFFFFF</p>
         </div>
-        <div>
+        <div class="row">
             <p>Vehicle ID: 129</p>
             <p>License: FFF293</p>
         </div>
         <button type="button">Add Vehicle</button>
     </div>
 
-    <div>
+    <div class="transactions box">
         <h2>Your Transactions</h2>
-        <div>
+        <div class="row">
             <p>Transaction ID: 23</p>
             <p>power transferred: 200 kWh</p>
             <p>started: 10 minutes ago</p>
             <p>ended: just now</p>
         </div>
-        <div>
-            <p>Transaction ID: 23</p>
-            <p>power transferred: 200 kWh</p>
+
+        <div class="row">
+            <p>Transaction ID: 27</p>
+            <p>power transferred: 20 kWh</p>
             <p>started: a few days ago</p>
             <p>ended: a few days ago</p>
         </div>
     </div>
 
-    <div>
+    <div class="transfer box">
         <h2>Transfer</h2>
-        <form action="" method="post">
-            <select name="donorVehicle" id="donor-vehicle"> <!--we must make sure that the donor vehicle can only be the current user's vehicle-->
-                <option value="28">Vehicle ID: 28</option>
-                <option value="129">Vehicle ID: 129</option>
-            </select>
-            <label for="donor-vehicle">Select Donor:</label>
+        <form id="transfer-form" action="" method="post">
 
-            <select name="recipientVehicle" id="recipient-vehicle"> <!--we must make sure that they can't charge the same vehicle-->
-                <option value="190">Vehicle ID: 190</option>
-                <option value="191">Vehicle ID: 191</option>
-                <option value="194">Vehicle ID: 194</option>
-            </select>
-            <label for="recipient-vehicle">Select Recipient:</label>
-            <button type="submit">Start</button>
+            <div>
+                <label for="donor-vehicle">Select Donor:</label>
+                <select name="donorVehicle" id="donor-vehicle"> <!--we must make sure that the donor vehicle can only be the current user's vehicle-->
+                    <option value="28">Vehicle ID: 28</option>
+                    <option value="129">Vehicle ID: 129</option>
+                </select>
+            </div>
+            
+            <img id="charging-img" src="charging.svg" alt="Charging icon" style="width: 260px; height: 260px;">
+
+            <div>
+                <label for="recipient-vehicle">Select Recipient:</label>   
+                <select name="recipientVehicle" id="recipient-vehicle"> <!--we must make sure that they can't charge the same vehicle-->
+                    <option value="190">Vehicle ID: 190</option>
+                    <option value="191">Vehicle ID: 191</option>
+                    <option value="194">Vehicle ID: 194</option>
+                </select>
+            </div>
+            <button type="submit" style="margin-top: auto;">Start</button>
         </form>
     </div>
 
