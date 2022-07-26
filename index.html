@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Transfer</title>
+</head>
+<body>
+    <h1>Power Transfer</h1>
+
+    <div>
+        <h2>Your Vehicles</h2>
+        <div>
+            <p>Vehicle ID: 28</p>
+            <p>License: FFFFFF</p>
+        </div>
+        <div>
+            <p>Vehicle ID: 129</p>
+            <p>License: FFF293</p>
+        </div>
+        <button type="button">Add Vehicle</button>
+    </div>
+
+    <div>
+        <h2>Your Transactions</h2>
+        <div>
+            <p>Transaction ID: 23</p>
+            <p>power transferred: 200 kWh</p>
+            <p>started: 10 minutes ago</p>
+            <p>ended: just now</p>
+        </div>
+        <div>
+            <p>Transaction ID: 23</p>
+            <p>power transferred: 200 kWh</p>
+            <p>started: a few days ago</p>
+            <p>ended: a few days ago</p>
+        </div>
+    </div>
+
+    <div>
+        <h2>Transfer</h2>
+        <form action="" method="post">
+            <select name="donorVehicle" id="donor-vehicle"> <!--we must make sure that the donor vehicle can only be the current user's vehicle-->
+                <option value="28">Vehicle ID: 28</option>
+                <option value="129">Vehicle ID: 129</option>
+            </select>
+            <label for="donor-vehicle">Select Donor:</label>
+
+            <select name="recipientVehicle" id="recipient-vehicle"> <!--we must make sure that they can't charge the same vehicle-->
+                <option value="190">Vehicle ID: 190</option>
+                <option value="191">Vehicle ID: 191</option>
+                <option value="194">Vehicle ID: 194</option>
+            </select>
+            <label for="recipient-vehicle">Select Recipient:</label>
+            <button type="submit">Start</button>
+        </form>
+    </div>
+
+</body>
+</html>
